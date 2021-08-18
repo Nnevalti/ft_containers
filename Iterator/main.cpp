@@ -1,5 +1,7 @@
-#include "Iterator_traits.hpp"
-#include "Reverse_iterator.hpp"
+#include "iterator.hpp"
+#include "reverse_iterator.hpp"
+#include "type_traits.hpp"
+#include "algorithm.hpp"
 
 int main()
 {

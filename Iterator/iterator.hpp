@@ -1,11 +1,20 @@
-#ifndef ITERATOR_TRAITS_HPP
-# define ITERATOR_TRAITS_HPP
+#ifndef ITERATOR_HPP
+# define ITERATOR_HPP
 
-# include "Iterator_category.hpp"
 # include <cstddef>
 
 namespace ft
 {
+	/*
+	** ITERATOR_CATEGORY
+	** Empty class to identify the category of the iterator
+	*/
+	struct input_iterator_tag {};
+	struct output_iterator_tag {};
+	struct forward_iterator_tag : public input_iterator_tag {};
+	struct bidirectional_iterator_tag : public forward_iterator_tag {};
+	struct random_acces_iterator_tag : public bidirectional_iterator_tag {};
+
 	/*
 	** ITERATOR TRAITS
 	** Traits class defining properties of iterators.
@@ -42,6 +51,19 @@ namespace ft
 			typedef const T*								pointer;
 			typedef const T&								reference;
 			typedef ft::random_acces_iterator_tag			iterator_category;
+	};
+
+	/*
+	** ITERATOR
+	*/
+	template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
+	struct iterator
+	{
+		typedef T         value_type;
+		typedef Distance  difference_type;
+		typedef Pointer   pointer;
+		typedef Reference reference;
+		typedef Category  iterator_category;
 	};
 }
 
