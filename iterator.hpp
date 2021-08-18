@@ -52,19 +52,6 @@ namespace ft
 			typedef const T&								reference;
 			typedef ft::random_acces_iterator_tag			iterator_category;
 	};
-
-	/*
-	** ITERATOR
-	*/
-	template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
-	struct iterator
-	{
-		typedef T         value_type;
-		typedef Distance  difference_type;
-		typedef Pointer   pointer;
-		typedef Reference reference;
-		typedef Category  iterator_category;
-	};
 }
 
 #endif
