@@ -24,6 +24,8 @@ namespace ft
 			reverse_iterator(): _current() {};
 			reverse_iterator (iterator_type it): _current(it) {};
 
+			reverse_iterator (const reverse_iterator& rev_it): _current(rev_it._current) {};
+
 			template <class Iter>
 			reverse_iterator (const reverse_iterator<Iter>& rev_it): _current(rev_it.base()) {};
 
@@ -37,10 +39,11 @@ namespace ft
 				return *--tmp;
 			}
 
-			// it + n
-			reverse_iterator operator+(difference_type n) const
+			// it->
+			pointer operator->() const
 			{
-				return reverse_iterator(_current - n);
+				iterator_type tmp = _current;
+				return &(*--tmp);
 			}
 
 			// ++it
@@ -58,18 +61,6 @@ namespace ft
 				return tmp;
 			}
 
-			// it += n
-			reverse_iterator& operator+= (difference_type n)
-			{
-				_current -= n;
-				return *this;
-			}
-
-			// it - n
-			reverse_iterator operator- (difference_type n) const
-			{
-				return reverse_iterator (_current + n);
-			}
 			// --it
 			reverse_iterator& operator--()
 			{
@@ -84,18 +75,30 @@ namespace ft
 				return tmp;
 			}
 
+			// it + n
+			reverse_iterator operator+(difference_type n) const
+			{
+				return reverse_iterator(_current - n);
+			}
+
+			// it += n
+			reverse_iterator& operator+= (difference_type n)
+			{
+				_current -= n;
+				return *this;
+			}
+
+			// it - n
+			reverse_iterator operator- (difference_type n) const
+			{
+				return reverse_iterator (_current + n);
+			}
+
 			// it -= n
 			reverse_iterator& operator-=(difference_type n)
 			{
 				_current += n;
 				return *this;
-			}
-
-			// it->
-			pointer operator->() const
-			{
-				iterator_type tmp = _current;
-				return &(*--tmp);
 			}
 
 			// it[]
