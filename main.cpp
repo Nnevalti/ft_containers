@@ -3,6 +3,7 @@
 #include "type_traits.hpp"
 #include "algorithm.hpp"
 #include "random_access_iterator.hpp"
+#include "Vector.hpp"
 
 int main()
 {
