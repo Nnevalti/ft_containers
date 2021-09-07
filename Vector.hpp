@@ -8,7 +8,7 @@
 namespace ft
 {
 	template < class T, class Alloc = std::allocator<T> >
-	class Vector
+	class vector
 	{
 		public:
 			typedef T											value_type;
@@ -27,33 +27,39 @@ namespace ft
 
 			// CONSTRUCTOR
 			// default
-			explicit Vector (const allocator_type& alloc = allocator_type())
+			explicit vector (const allocator_type& alloc = allocator_type())
 			: _size(0), _capacity(0), _alloc(alloc), _array(NULL) {}
 
 			// fill
-			explicit Vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
+			explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 			: _size(n), _capacity(n), _alloc(alloc)
 			{
 				_array = _alloc.allocate(_capacity);
 				for (size_type i = 0; i < _size; i++)
-					_array[i] = val;
+					_alloc.construct(&_array[i], val);
 			}
 
 			// // range
 			// template <class InputIterator>
-			// Vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
+			// vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
 			// {}
-			//
-			// // copy
-			// Vector (const 	Vector& x)
-			// {}
-			//
+
+			// copy
+			vector (const vector& x) : _alloc(x._alloc), _size(x._size), _capacity(x._capacity)
+			{
+				_array = _alloc.allocate(_capacity);
+				for (int i = 0; i < _size; i++)
+					_alloc.construct(&_array[i], x._array[i]);
+			}
+
 			// // = operator
-			// Vector operator=(const Vector &src) {}
+			// vector operator=(const vector &src) {}
 
 			// DESTRUCTOR
-			~Vector()
+			~vector()
 			{
+				for (iterator it = begin(); it != end(); it++)
+					_alloc.destroy(&(*it));
 				_alloc.deallocate(_array, _capacity);
 			}
 
@@ -88,6 +94,8 @@ namespace ft
 			}
 			void reserve(size_type n)
 			{
+				if (n > max_size())
+					throw std::length_error("vector");
 				if (n > _capacity)
 					reAlloc(n);
 			}
@@ -117,10 +125,44 @@ namespace ft
 
 			// assign, push_back, pop_back, insert, erase, swap, clear
 			template <class InputIterator>
-			void assign (InputIterator first, InputIterator last);
+			void assign (InputIterator first, InputIterator last)
+			{
+			}
 
-			void assign (size_type n, const value_type& val);
-			
+			void assign (size_type n, const value_type& val)
+			{
+			}
+
+			void push_back (const value_type& val)
+			{
+				if (_size + 1 > _capacity)
+					reAlloc(!_capacity ? 2 : _capacity * 1.5);
+				_alloc.construct(&_array[_size++], val);
+			}
+
+			void pop_back()
+			{
+				if (_size)
+				{
+					_alloc.destroy(&_array[_size - 1]);
+					_size--;
+				}
+			}
+			// iterator insert (iterator position, const value_type& val);
+			// void insert (iterator position, size_type n, const value_type& val);
+			// template <class InputIterator>
+			// void insert (iterator position, InputIterator first, InputIterator last);
+
+			iterator erase (iterator position);
+			iterator erase (iterator first, iterator last);
+
+			void swap (vector& x);
+
+			void clear()
+			{
+				while (_size)
+					pop_back();
+			}
 			// get_allocator
 
 		private:
@@ -131,10 +173,11 @@ namespace ft
 
 			void reAlloc(size_type n)
 			{
-				pointer tmp = _alloc.allocate(n, _array);
+				pointer tmp = _alloc.allocate(n);
 				for (int i = 0; i < _size; i++)
-					tmp[i] = _array[i];
-				_alloc.deallocate(_array, _capacity);
+					_alloc.construct(&tmp[i], _array[i]);
+				this->~vector();
+
 				_array = tmp;
 				_capacity = n;
 			}

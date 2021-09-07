@@ -34,7 +34,7 @@ namespace ft
 
 			// ++a, a++
 			iterator& operator++() { ++_ptr; return *this;}
-			iterator& operator++(int)
+			iterator operator++(int)
 			{
 				iterator tmp = _ptr;
 				++_ptr;
@@ -42,7 +42,7 @@ namespace ft
 			}
 			// --a, a--, *a--
 			iterator& operator--() { --_ptr; return *this;}
-			iterator& operator--(int)
+			iterator operator--(int)
 			{
 				iterator tmp = _ptr;
 				--_ptr;
