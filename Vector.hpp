@@ -19,7 +19,7 @@ namespace ft
 			typedef typename allocator_type::const_pointer		const_pointer;
 
 			typedef randomAccessIterator<T>						iterator;
-			typedef randomAccessIterator<T, const T*, const T&>	const_iterator;
+			typedef randomAccessIterator<const T>				const_iterator;
 			typedef reverseIterator<iterator>					reverse_iterator;
 			typedef reverseIterator<const_iterator>				const_reverse_iterator;
 			typedef std::ptrdiff_t								difference_type;
@@ -70,11 +70,11 @@ namespace ft
 			iterator end() { return iterator(_array + _size); }
 			const_iterator end() const { return const_iterator(_array + _size); }
 
-			reverse_iterator rbegin() { return iterator(_array + _size - 1); }
-			const_reverse_iterator rbegin() const { return const_iterator(_array + _size - 1); }
+			reverse_iterator rbegin() { return reverse_iterator(end()); }
+			const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
 
-			reverse_iterator rend() { return iterator(_array - 1); }
-			const_reverse_iterator rend() const { return const_iterator(_array - 1); }
+			reverse_iterator rend() { return iterator(begin()); }
+			const_reverse_iterator rend() const { return const_iterator(begin()); }
 
 			// size, max_size, resize, capacity, empty, reserve
 			size_type size() const { return _size; }

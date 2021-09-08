@@ -32,24 +32,23 @@ int main()
 			std::cout << *it << " ";
 	std::cout << std::endl;
 
-	std::cout << "vector_default (const_iterator): ";
-	for (ft::vector<int>::const_iterator it = vector_default.begin(); it != vector_default.end(); it++)
-			std::cout << *it << " ";
+	std::cout << "vector_default (reverse_iterator): ";
+	for (ft::vector<int>::reverse_iterator rit = vector_default.rbegin(); rit != vector_default.rend(); rit++)
+			std::cout << *rit << " ";
 	std::cout << std::endl;
-	//
-	// std::cout << "vector_default (reverse_iterator): ";
-	// for (ft::vector<int>::reverse_iterator rit = vector_default.rbegin(); rit != vector_default.rend(); rit++)
+
+	// std::cout << "vector_default (const_iterator): ";
+	// for (ft::vector<int>::const_iterator it = vector_default.begin(); it != vector_default.end(); it++)
 	// 		std::cout << *it << " ";
 	// std::cout << std::endl;
-	//
 	// std::cout << "vector_default (const_reverse_iterator): ";
 	// for (ft::vector<int>::const_reverse_iterator rit = vector_default.rbegin(); rit != vector_default.rend(); rit++)
 	// 		std::cout << *it << " ";
 	// std::cout << std::endl;
 
-	std::cout << vector_default.size() << std::endl;
-	vector_default.clear();
-	std::cout << vector_default.size() << std::endl;
-	system("leaks a.out");
+	// std::cout << vector_default.size() << std::endl;
+	// vector_default.clear();
+	// std::cout << vector_default.size() << std::endl;
+	// system("leaks a.out");
 	return 0;
 }

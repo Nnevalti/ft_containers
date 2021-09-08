@@ -5,16 +5,17 @@
 
 namespace ft
 {
-	template <typename T, typename Pointer = T*, typename Reference = T&>
+	template <typename T>
 	class randomAccessIterator
 	{
 		public:
-			typedef T								value_type;
-		    typedef std::ptrdiff_t					difference_type;
-		    typedef Pointer							pointer;
-		    typedef Reference						reference;
-		    typedef ft::random_acces_iterator_tag	iterator_category;
-			typedef randomAccessIterator<T>			iterator;
+			typedef T													iterator_type;
+			typedef typename iterator_traits<T *>::value_type				value_type;
+		    typedef typename iterator_traits<T *>::difference_type		difference_type;
+		    typedef typename iterator_traits<T *>::pointer				pointer;
+		    typedef typename iterator_traits<T *>::reference				reference;
+		    typedef ft::random_acces_iterator_tag						iterator_category;
+			typedef randomAccessIterator<T>								iterator;
 
 		protected:
 			pointer _ptr;
@@ -23,7 +24,7 @@ namespace ft
 			// X a, X(); X b(a), b = a, ~X()
 			randomAccessIterator(): _ptr(NULL) {}
 			randomAccessIterator(pointer ptr): _ptr(ptr) {}
-			randomAccessIterator(const randomAccessIterator &src) { *this = src; }
+			randomAccessIterator(const randomAccessIterator &src): _ptr(src._ptr){}
 			randomAccessIterator operator=(const randomAccessIterator &src)
 			{
 				if (this != &src)
