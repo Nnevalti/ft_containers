@@ -21,13 +21,19 @@ namespace ft
 
 		public:
 			// CONSTRUCTOR (default, initialization, copy)
-			reverseIterator(): _current() {};
+			reverseIterator(): _current(iterator_type()) {};
 			reverseIterator (iterator_type it): _current(it) {};
-
-			reverseIterator (const reverseIterator& rev_it): _current(rev_it._current) {};
-
+			// reverseIterator (const reverseIterator& rev_it): _current(rev_it._current) {};
 			template <class Iter>
 			reverseIterator (const reverseIterator<Iter>& rev_it): _current(rev_it.base()) {};
+			virtual ~reverseIterator() {}
+
+			// reverseIterator& operator=(reverseIterator const& rhs)
+			// {
+			// 	if (this != &rhs)
+			// 		_it = rhs._it;
+			// 	return *this;
+			// }
 
 			// MEMBER FUNCTIONS
 			iterator_type base() const { return _current; }
@@ -56,7 +62,7 @@ namespace ft
 			// it++
 			reverseIterator  operator++(int)
 			{
-				reverseIterator tmp = *this;
+				reverseIterator tmp(*this);
 				--_current;
 				return tmp;
 			}
@@ -70,7 +76,7 @@ namespace ft
 			// it--
 			reverseIterator& operator--(int)
 			{
-				reverseIterator tmp = *this;
+				reverseIterator tmp(*this);
 				++_current;
 				return tmp;
 			}
@@ -115,8 +121,22 @@ namespace ft
 		return lhs.base() == rhs.base();
 	}
 
+	// For non const and const comparison
+	template <class Iterator_lhs, class Iterator_rhs>
+	bool operator== (const reverseIterator<Iterator_lhs>& lhs, const reverseIterator<Iterator_rhs>& rhs)
+	{
+		return lhs.base() == rhs.base();
+	}
+
 	template <class Iterator>
 	bool operator!= (const reverseIterator<Iterator>& lhs, const reverseIterator<Iterator>& rhs)
+	{
+		return lhs.base() != rhs.base();
+	}
+
+	// For non const and const comparison
+	template <class Iterator_lhs, class Iterator_rhs>
+	bool operator!= (const reverseIterator<Iterator_lhs>& lhs, const reverseIterator<Iterator_rhs>& rhs)
 	{
 		return lhs.base() != rhs.base();
 	}

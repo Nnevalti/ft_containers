@@ -17,13 +17,14 @@ namespace ft
 			typedef typename allocator_type::const_reference	const_reference;
 			typedef typename allocator_type::pointer			pointer;
 			typedef typename allocator_type::const_pointer		const_pointer;
+			typedef typename allocator_type::difference_type	difference_type;
+			typedef typename allocator_type::size_type				size_type;
 
-			typedef randomAccessIterator<T>						iterator;
-			typedef randomAccessIterator<const T>				const_iterator;
+
+			typedef ft::randomAccessIterator<value_type>		iterator;
+			typedef ft::randomAccessIterator<value_type const>	const_iterator;
 			typedef reverseIterator<iterator>					reverse_iterator;
 			typedef reverseIterator<const_iterator>				const_reverse_iterator;
-			typedef std::ptrdiff_t								difference_type;
-			typedef size_t										size_type;
 
 			// CONSTRUCTOR
 			// default
@@ -39,10 +40,17 @@ namespace ft
 					_alloc.construct(&_array[i], val);
 			}
 
-			// // range
+			// range
 			// template <class InputIterator>
-			// vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
-			// {}
+			// vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
+			// typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0): _alloc(alloc)
+			// {
+			// 	_size = ft::distance(first, last);
+			// 	_capacity = _size;
+			// 	_array = _alloc.allocate(_capacity);
+			// 	for (int i = 0; first != last; i++, first++)
+			// 		_alloc.construct(&_array[i], *first);			}
+			// }
 
 			// copy
 			vector (const vector& x) : _alloc(x._alloc), _size(x._size), _capacity(x._capacity)
@@ -52,15 +60,24 @@ namespace ft
 					_alloc.construct(&_array[i], x._array[i]);
 			}
 
-			// // = operator
-			// vector operator=(const vector &src) {}
-
 			// DESTRUCTOR
 			~vector()
 			{
 				for (iterator it = begin(); it != end(); it++)
 					_alloc.destroy(&(*it));
 				_alloc.deallocate(_array, _capacity);
+			}
+
+			// = operator overload
+			vector operator=(const vector &src)
+			{
+				_size = src._size;
+				_capacity = src._capacity;
+				_alloc = src._alloc;
+				_array = _alloc.allocate(_capacity);
+				for (int i = 0; i < _size; i++)
+					_alloc.construct(&_array[i], src._array[i]);
+				return *this;
 			}
 
 			// begin, end, rbegin, rend

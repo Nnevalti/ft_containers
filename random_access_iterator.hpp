@@ -9,31 +9,48 @@ namespace ft
 	class randomAccessIterator
 	{
 		public:
-			typedef T													iterator_type;
-			typedef typename iterator_traits<T *>::value_type				value_type;
-		    typedef typename iterator_traits<T *>::difference_type		difference_type;
-		    typedef typename iterator_traits<T *>::pointer				pointer;
-		    typedef typename iterator_traits<T *>::reference				reference;
-		    typedef ft::random_acces_iterator_tag						iterator_category;
-			typedef randomAccessIterator<T>								iterator;
+		/* Member types */
+			typedef T										value_type;
+			typedef T*										pointer;
+			typedef T&										reference;
+			typedef const T*								const_pointer;
+			typedef const T&								const_reference;
+			typedef std::ptrdiff_t							difference_type;
+			typedef typename ft::random_acces_iterator_tag	iterator_category;
+			typedef randomAccessIterator<T>			iterator;
 
 		protected:
+		/* protected attributes */
 			pointer _ptr;
 
 		public:
-			// X a, X(); X b(a), b = a, ~X()
+		/* Contructor / Destructor */
+			// Default
 			randomAccessIterator(): _ptr(NULL) {}
+			// Type specific
 			randomAccessIterator(pointer ptr): _ptr(ptr) {}
-			randomAccessIterator(const randomAccessIterator &src): _ptr(src._ptr){}
-			randomAccessIterator operator=(const randomAccessIterator &src)
+			// Copy
+			randomAccessIterator(const iterator &src): _ptr(src._ptr){}
+			// Destructor
+			~randomAccessIterator() {}
+
+		/* Operator overload */
+			// Assignement operator
+			randomAccessIterator operator=(const iterator &src)
 			{
 				if (this != &src)
 					_ptr = src._ptr;
 				return *this;
 			}
-			~randomAccessIterator() {}
 
-			// ++a, a++
+			// Overload called when trying to copy construct a const_iterator
+			// based on an iterator
+			operator randomAccessIterator<value_type const>() const
+			{
+				return randomAccessIterator<value_type const>(_ptr);
+			}
+
+			// Increment / Decrement
 			iterator& operator++() { ++_ptr; return *this;}
 			iterator operator++(int)
 			{
@@ -41,7 +58,6 @@ namespace ft
 				++_ptr;
 				return (tmp);
 			}
-			// --a, a--, *a--
 			iterator& operator--() { --_ptr; return *this;}
 			iterator operator--(int)
 			{
@@ -50,30 +66,28 @@ namespace ft
 				return (tmp);
 			}
 
-			// a == b, a != b
-			bool operator==(const randomAccessIterator& src) const { return _ptr == src._ptr; }
-			bool operator!=(const randomAccessIterator& src) const { return _ptr != src._ptr; }
-			// *a, a->m
-			// *a = t
-			reference operator*(){ return *_ptr; }
-			pointer operator->(){ return _ptr; }
-
-			// a + n, n + a, a - n, a - b
-			// iterator operator+(const difference_type &n) { return iterator(_ptr - n); }
-			// iterator operator-(const ) {}
-
-			// a < b, a > b, a <= b, a >= b
+			// Relational operator
+			bool operator==(const iterator& src) const { return _ptr == src._ptr; }
+			bool operator!=(const iterator& src) const { return _ptr != src._ptr; }
 			bool operator<(const iterator& src) const { return _ptr < src._ptr; }
 			bool operator>(const iterator& src) const { return _ptr > src._ptr; }
 			bool operator<=(const iterator& src) const { return _ptr <= src._ptr; }
 			bool operator>=(const iterator& src) const { return _ptr >= src._ptr; }
 
-			// a += n, a -= n
-			iterator& operator+=(int n) { _ptr += n; return *this;}
-			iterator& operator-=(int n) { _ptr -= n; return *this;}
+			// Arithmetic
+			iterator operator+(const difference_type &n) { return iterator(_ptr - n); }
+			iterator operator-(const difference_type &n) { return iterator(_ptr + n); }
+			difference_type operator+(const iterator &src) { return _ptr + src._ptr; }
+			difference_type operator-(const iterator &src) { return _ptr - src._ptr; }
 
-			// a[n]
+			iterator& operator+=(difference_type n) { _ptr += n; return *this; }
+			iterator& operator-=(difference_type n) { _ptr -= n; return *this; }
+
+			// Access
+			reference operator*(){ return *_ptr; }
+			pointer operator->(){ return _ptr; }
 			reference operator[](const difference_type n) const { return _ptr[n]; }
+
 	};
 }
 
