@@ -15,9 +15,9 @@ namespace ft
 			typedef T&										reference;
 			typedef const T*								const_pointer;
 			typedef const T&								const_reference;
-			typedef std::ptrdiff_t							difference_type;
+			typedef typename std::ptrdiff_t					difference_type;
 			typedef typename ft::random_acces_iterator_tag	iterator_category;
-			typedef randomAccessIterator<T>			iterator;
+			typedef randomAccessIterator<T>					iterator;
 
 		protected:
 		/* protected attributes */
