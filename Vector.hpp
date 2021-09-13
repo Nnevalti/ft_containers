@@ -41,16 +41,21 @@ namespace ft
 			}
 
 			// range
-			// template <class InputIterator>
-			// vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
-			// typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0): _alloc(alloc)
-			// {
-			// 	_size = ft::distance(first, last);
-			// 	_capacity = _size;
-			// 	_array = _alloc.allocate(_capacity);
-			// 	for (int i = 0; first != last; i++, first++)
-			// 		_alloc.construct(&_array[i], *first);			}
-			// }
+			template <class InputIterator>
+			vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
+			: _size(0), _capacity(0), _alloc(alloc), _array(NULL)
+			{
+				size_type diff = 0;
+				for (InputIterator it = first; it != last; it++)
+				{
+					diff++;
+				}
+				_size = diff;
+				_capacity = _size;
+				_array = _alloc.allocate(_capacity);
+				for (int i = 0; first != last; i++, first++)
+					_alloc.construct(&_array[i], *first);
+			}
 
 			// copy
 			vector (const vector& x) : _alloc(x._alloc), _size(x._size), _capacity(x._capacity)
@@ -95,24 +100,32 @@ namespace ft
 
 			// size, max_size, resize, capacity, empty, reserve
 			size_type size() const { return _size; }
+
 			size_type max_size() const { return _alloc.max_size(); }
-			// void resize(size_type n, value_type val = value_type())
-			// {
-			// 	// reAlloc(n);
-			// 	// for (int i = _size; i < _capacity; i++)
-			// 	// 	_array[i] = val
-			// }
+
+			void resize(size_type n, value_type val = value_type())
+			{
+				if (n < _size)
+					while (_size != n)
+						pop_back();
+				if (n > _size)
+					while (_size != n)
+						push_back(val);
+			}
+
 			size_type capacity() const { return _capacity; }
+
 			bool empty() const
 			{
 				if (this->_size == 0)
 					return true;
 				return false;
 			}
+
 			void reserve(size_type n)
 			{
 				if (n > max_size())
-					throw std::length_error("vector");
+					throw std::length_error("allocator<T>::allocate(size_t n) 'n' exceeds maximum supported size");
 				if (n > _capacity)
 					reAlloc(n);
 			}
@@ -123,7 +136,7 @@ namespace ft
 
 			reference at (size_type n)
 			{
-				if (n > this->_size)
+				if (n >= this->_size)
 					throw std::out_of_range("vector");
 				return _array[n];
 			}
@@ -141,19 +154,21 @@ namespace ft
 			const_reference back() const { return _array[_size - 1]; }
 
 			// assign, push_back, pop_back, insert, erase, swap, clear
-			template <class InputIterator>
-			void assign (InputIterator first, InputIterator last)
-			{
-			}
-
-			void assign (size_type n, const value_type& val)
-			{
-			}
+			// range
+			// template <class InputIterator>
+			// void assign (InputIterator first, InputIterator last)
+			// {
+			// }
+			
+			// fill
+			// void assign (size_type n, const value_type& val)
+			// {
+			// }
 
 			void push_back (const value_type& val)
 			{
 				if (_size + 1 > _capacity)
-					reAlloc(!_capacity ? 2 : _capacity * 1.5);
+					reAlloc(!_capacity ? 1 : _capacity * 2);
 				_alloc.construct(&_array[_size++], val);
 			}
 
