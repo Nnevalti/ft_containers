@@ -2,7 +2,7 @@
 # define reverseIterator_HPP
 
 # include "iterator.hpp"
-#include <iostream>
+# include <iostream>
 namespace ft
 {
 	template <class Iterator>
@@ -149,7 +149,7 @@ namespace ft
 	template <class Iterator_lhs, class Iterator_rhs>
 	typename reverseIterator<Iterator_lhs>::difference_type operator- (const reverseIterator<Iterator_lhs>& lhs, const reverseIterator<Iterator_rhs>& rhs)
 	{
-		// std::cout << (lhs.base() - rhs.base()) << '\n';
+		std::cout << "\nCOUCOU: " << (rhs.base() - lhs.base()) << '\n';
 		return lhs.base() - rhs.base();
 	}
 }

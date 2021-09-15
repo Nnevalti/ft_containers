@@ -108,14 +108,16 @@ namespace ft
 			void resize(size_type n, value_type val = value_type())
 			{
 				if (n < _size)
-					while (_size != n)
-						pop_back();
-				if (n > _size)
+				{
+					while (n < _size)
+						_alloc.destroy(&_array[--_size]);
+				}
+				else
 				{
 					if (n > _capacity * 2)
-						reAlloc(n);
+						reserve(n);
 					else if (n > _capacity)
-						reAlloc(!_capacity ? 1 : _capacity * 2);
+						reserve(_capacity * 2);
 					while (_size != n)
 						push_back(val);
 
@@ -165,68 +167,104 @@ namespace ft
 			// assign, push_back, pop_back, insert, erase, swap, clear
 			// range
 			template <class InputIterator>
-			void assign (InputIterator first, InputIterator last)
+			void assign (typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last)
 			{
-				clear();
-				insert(begin(), first, last);
+				difference_type len = last - first;
+				
+				if (static_cast<size_type>(len) > _capacity)
+				{
+					this->~vector();
+					_capacity = static_cast<size_type>(len);
+					_size = 0;
+					_array = _alloc.allocate(_capacity);
+					while (first != last)
+						_alloc.construct(&_array[_size++], *first++);
+				}
+				else
+				{
+					clear();
+					while (first != last)
+						_alloc.construct(&_array[_size++], *first++);
+				}
 			}
 
 			// fill
 			void assign (size_type n, const value_type& val)
 			{
-				clear();
-				insert(begin(), n, val);
+				if (n > _capacity)
+				{
+					this->~vector();
+					_capacity = n;
+					_size = n;
+					_array = _alloc.allocate(_capacity);
+					for (size_type i = 0; i < n; i++)
+						_alloc.construct(&_array[i], val);
+				}
+				else
+				{
+					clear();
+					while (_size < n)
+						_alloc.construct(&_array[_size++], val);
+				}
 			}
 
 			void push_back (const value_type& val)
 			{
-				if (_size + 1 > _capacity)
-					reAlloc(!_capacity ? 1 : _capacity * 2);
-				_alloc.construct(&_array[_size++], val);
+				if (_size == _capacity)
+					resize(this->_size + 1, val);
+				else
+					_alloc.construct(&_array[_size++], val);
 			}
 
 			void pop_back()
 			{
-				if (_size)
-				{
-					_alloc.destroy(&_array[_size - 1]);
-					_size--;
-				}
+				_alloc.destroy(&_array[--_size]);
 			}
 
+			// single element
 			iterator insert (iterator position, const value_type& val)
 			{
-				size_type new_size = _size + 1;
-				size_type new_capacity = !_capacity ? 1 : _capacity * 2;
+				difference_type idx = position - begin();
 
-				if (new_size > _size)
-				{
-					pointer tmp = _alloc.allocate(new_capacity);
-					size_type i = 0;
-
-					for (iterator it = begin(); it != end(); it++)
-					{
-						if (it == position)
-						{
-							_alloc.construct(&tmp[i++], val);
-						}
-						_alloc.construct(&tmp[i++], *it);
-					}
-					this->~vector();
-					_capacity = new_capacity;
-					_size = new_size;
-					_array = tmp;
-				}
-				else
-				{
-				}
+				insert(position, 1, val);
+				return (iterator(this->begin() + idx));
 			}
 
-			// void insert (iterator position, size_type n, const value_type& val)
-			// {}
-			// template <class InputIterator>
-			// void insert (iterator position, InputIterator first, InputIterator last)
-			// {}
+			// fill
+			void insert (iterator position, size_type n, const value_type& val)
+			{
+				difference_type const pos_diff = position - begin();
+				difference_type const old_end_diff = end() - begin();
+				iterator old_end, new_end;
+
+				resize(this->_size + n);
+				new_end = end();
+				position = begin() + pos_diff;
+				old_end = begin() + old_end_diff;
+				while (old_end != position)
+					*--new_end = *--old_end;
+				while (n-- > 0)
+					*position++ = val;
+			}
+
+			// range
+			template <class InputIterator>
+			void insert (iterator position, InputIterator first, typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type last)
+			{
+				difference_type n = last - first;
+				difference_type const pos_diff = position - begin();
+				difference_type const old_end_diff = end() - begin();
+				iterator old_end, new_end;
+
+				resize(_size + n);
+				new_end = end();
+				position = begin() + pos_diff;
+				old_end = begin() + old_end_diff;
+				while (old_end != position)
+					*--new_end = *--old_end;
+				while (first != last)
+					*position++ = *first++;
+			}
 
 			iterator erase (iterator position)
 			{
