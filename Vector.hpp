@@ -47,7 +47,9 @@ namespace ft
 			vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
 			: _size(0), _capacity(0), _alloc(alloc), _array(NULL)
 			{
-				difference_type diff = last - first;
+				difference_type diff = 0;
+
+				for (InputIterator tmp = first; tmp != last; tmp++, diff++);
 				_size = diff;
 				_capacity = _size;
 				_array = _alloc.allocate(_capacity);
@@ -169,8 +171,9 @@ namespace ft
 			template <class InputIterator>
 			void assign (typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last)
 			{
-				difference_type len = last - first;
-				
+				difference_type len = 0;
+
+				for (InputIterator tmp = first; tmp != last; tmp++, len++);
 				if (static_cast<size_type>(len) > _capacity)
 				{
 					this->~vector();
@@ -251,11 +254,12 @@ namespace ft
 			template <class InputIterator>
 			void insert (iterator position, InputIterator first, typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type last)
 			{
-				difference_type n = last - first;
+				difference_type n = 0;
 				difference_type const pos_diff = position - begin();
 				difference_type const old_end_diff = end() - begin();
 				iterator old_end, new_end;
 
+				for (InputIterator tmp = first; tmp != last; tmp++, n++);
 				resize(_size + n);
 				new_end = end();
 				position = begin() + pos_diff;
@@ -296,10 +300,10 @@ namespace ft
 
 			void swap (vector& x)
 			{
-				vector tmp(x);
-
-				x = *this;
-				*this = tmp;
+				vector tmp;
+				tmp.swap_content(x);
+				x.swap_content(*this);
+				this->swap_content(tmp);
 			}
 
 			void clear()
@@ -328,6 +332,18 @@ namespace ft
 
 				_array = tmp;
 				_capacity = n;
+			}
+
+			void swap_content(vector& x)
+			{
+				_size = x._size;
+				_alloc = x._alloc;
+				_capacity = x._capacity;
+				_array = x._array;
+
+				x._array = NULL;
+				x._size = 0;
+				x._capacity = 0;
 			}
 	};
 	// relational operators: ==, !=, <, <=, >, >=

@@ -20,14 +20,19 @@ namespace ft
 			iterator_type _current;
 
 		public:
-		/*Contructor and Destructor */
+		/* Contructor and Destructor */
+			// Default
 			reverseIterator(): _current(iterator_type()) {};
+			// Type specific
 			reverseIterator (iterator_type _current): _current(_current) {};
+			// Copy
 			template <class Iter>
 			reverseIterator (const reverseIterator<Iter>& rev_it): _current(rev_it.base()) {};
+			// Destructor
 			virtual ~reverseIterator() {}
 
 		/* Overload operator */
+			// Assignement operator
 			reverseIterator& operator=(reverseIterator const& rhs)
 			{
 				if (this != &rhs)
@@ -35,35 +40,13 @@ namespace ft
 				return *this;
 			}
 
-			// ++it
-			reverseIterator& operator++()
-			{
-				--_current;
-				return *this;
-			}
+			// Increment / Decrement
+			reverseIterator& operator++() { --_current; return *this; }
+			reverseIterator  operator++(int) { reverseIterator tmp(*this); --_current; return tmp; }
+			reverseIterator& operator--() { ++_current; return *this; }
+			reverseIterator operator--(int) { reverseIterator tmp(*this); ++_current; return tmp; }
 
-			// it++
-			reverseIterator  operator++(int)
-			{
-				reverseIterator tmp(*this);
-				--_current;
-				return tmp;
-			}
-
-			// --it
-			reverseIterator& operator--()
-			{
-				++_current;
-				return *this;
-			}
-			// it--
-			reverseIterator operator--(int)
-			{
-				reverseIterator tmp(*this);
-				++_current;
-				return tmp;
-			}
-
+			// Relational operator
 			bool operator==(const reverseIterator& src) const { return _current == src._current; }
 			bool operator!=(const reverseIterator& src) const { return _current != src._current; }
 			bool operator<(const reverseIterator& src) const { return _current < src._current; }
@@ -71,35 +54,24 @@ namespace ft
 			bool operator<=(const reverseIterator& src) const { return _current <= src._current; }
 			bool operator>=(const reverseIterator& src) const { return _current >= src._current; }
 
-			// it + n /  it - n / n - it
+			// Arithmetic
 			reverseIterator operator+(difference_type n) const { return reverseIterator(_current - n); }
 			reverseIterator operator-(difference_type n) const { return reverseIterator(_current + n); }
-			difference_type operator-(const Iterator &src) const { return _current - src._current; }
+			difference_type operator+(const Iterator &src) const { return _current - src._current; }
+			difference_type operator-(const Iterator &src) const { return _current + src._current; }
 
-			// it += n / it -= n
 			reverseIterator& operator+= (difference_type n) { _current -= n; return *this; }
 			reverseIterator& operator-=(difference_type n) { _current += n; return *this; }
 
-			// *it
-			reference operator*() const
-			{
-				iterator_type tmp = _current;
-				return *--tmp;
-			}
-
-			// it->
-			pointer operator->() const
-			{
-				iterator_type tmp = _current;
-				return &(*--tmp);
-			}
-
-			// it[n]
+			// Access
+			reference operator*() const { iterator_type tmp = _current; return *--tmp; }
+			pointer operator->() const { iterator_type tmp = _current; return &(*--tmp); }
 			reference operator[](difference_type n) const { return *(*this + n); }
 
 		/* MEMBER FUNCTIONS */
 			iterator_type base() const { return _current; }
 
+		/* For non const and const comparison */
 			template <class Iterator_lhs, class Iterator_rhs>
 			friend bool operator== (const reverseIterator<Iterator_lhs>& lhs, const reverseIterator<Iterator_rhs>& rhs)
 			{
@@ -147,9 +119,8 @@ namespace ft
 	}
 
 	template <class Iterator_lhs, class Iterator_rhs>
-	typename reverseIterator<Iterator_lhs>::difference_type operator- (const reverseIterator<Iterator_lhs>& lhs, const reverseIterator<Iterator_rhs>& rhs)
+	typename reverseIterator<Iterator_lhs>::difference_type operator-(const reverseIterator<Iterator_lhs>& lhs, const reverseIterator<Iterator_rhs>& rhs)
 	{
-		std::cout << "\nCOUCOU: " << (rhs.base() - lhs.base()) << '\n';
 		return lhs.base() - rhs.base();
 	}
 }

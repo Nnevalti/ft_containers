@@ -24,7 +24,7 @@ namespace ft
 			pointer _ptr;
 
 		public:
-		/* Contructor / Destructor */
+		/* Contructor and Destructor */
 			// Default
 			randomAccessIterator(): _ptr(NULL) {}
 			// Type specific
@@ -77,9 +77,7 @@ namespace ft
 			// Arithmetic
 			iterator operator+(const difference_type &n) const { return iterator(_ptr + n); }
 			iterator operator-(const difference_type &n) const { return iterator(_ptr - n); }
-			difference_type operator-(const iterator &src) const {
-				// std::cout << src._ptr - _ptr << '\n';
-				return _ptr - src._ptr; }
+			difference_type operator-(const iterator &src) const { return _ptr - src._ptr; }
 
 			iterator& operator+=(difference_type n) { _ptr += n; return *this; }
 			iterator& operator-=(difference_type n) { _ptr -= n; return *this; }
@@ -89,7 +87,7 @@ namespace ft
 			pointer operator->(){ return _ptr; }
 			reference operator[](const difference_type n) const { return _ptr[n]; }
 
-			/* For non const and const comparison */
+		/* For non const and const comparison */
 			template <class Iterator_lhs, class Iterator_rhs>
 			friend bool operator==(const randomAccessIterator<Iterator_lhs>& lhs, const randomAccessIterator<Iterator_rhs>& rhs)
 			{
@@ -127,6 +125,7 @@ namespace ft
 			}
 	};
 
+	// n + randIte
 	template<class T>
 	ft::randomAccessIterator<T>
 	operator+(typename ft::randomAccessIterator<T>::difference_type n,
