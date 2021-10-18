@@ -25,17 +25,15 @@ namespace ft
 
 			typedef ft::randomAccessIterator<value_type>		iterator;
 			typedef ft::randomAccessIterator<value_type const>	const_iterator;
-			typedef reverseIterator<iterator>					reverse_iterator;
-			typedef reverseIterator<const_iterator>				const_reverse_iterator;
+			typedef ft::reverseIterator<iterator>					reverse_iterator;
+			typedef ft::reverseIterator<const_iterator>				const_reverse_iterator;
 
 			// CONSTRUCTOR
 			// default
-			explicit vector (const allocator_type& alloc = allocator_type())
-			: _size(0), _capacity(0), _alloc(alloc), _array(NULL) {}
+			explicit vector (const allocator_type& alloc = allocator_type()) : _alloc(alloc), _array(NULL), _size(0), _capacity(0) {}
 
 			// fill
-			explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
-			: _size(n), _capacity(n), _alloc(alloc)
+			explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) :  _alloc(alloc), _size(n), _capacity(n)
 			{
 				_array = _alloc.allocate(_capacity);
 				for (size_type i = 0; i < _size; i++)
@@ -44,10 +42,9 @@ namespace ft
 
 			// range
 			template <class InputIterator>
-			vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0)
-			: _size(0), _capacity(0), _alloc(alloc), _array(NULL)
+			vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value >::type* = 0) :  _alloc(alloc), _array(NULL), _size(0), _capacity(0)
 			{
-				difference_type diff = 0;
+				size_type diff = 0;
 
 				for (InputIterator tmp = first; tmp != last; tmp++, diff++);
 				_size = diff;
@@ -58,7 +55,7 @@ namespace ft
 			}
 
 			// copy
-			vector (const vector& x) : _size(x._size), _capacity(x._capacity), _alloc(x._alloc)
+			vector (const vector& x) :  _alloc(x._alloc), _size(x._size), _capacity(x._capacity)
 			{
 				_array = _alloc.allocate(_capacity);
 				for (size_type i = 0; i < _size; i++)
@@ -99,8 +96,8 @@ namespace ft
 			reverse_iterator rbegin() { return reverse_iterator(end()); }
 			const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
 
-			reverse_iterator rend() { return iterator(begin()); }
-			const_reverse_iterator rend() const { return const_iterator(begin()); }
+			reverse_iterator rend() { return reverse_iterator(begin()); }
+			const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 
 			// size, max_size, resize, capacity, empty, reserve
 			size_type size() const { return _size; }
@@ -130,9 +127,7 @@ namespace ft
 
 			bool empty() const
 			{
-				if (this->_size == 0)
-					return true;
-				return false;
+				return (_size == 0);
 			}
 
 			void reserve(size_type n)
@@ -171,14 +166,14 @@ namespace ft
 			template <class InputIterator>
 			void assign (typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type first, InputIterator last)
 			{
-				difference_type len = 0;
+				size_type len = 0;
 
 				for (InputIterator tmp = first; tmp != last; tmp++, len++);
-				if (static_cast<size_type>(len) > _capacity)
+				if (len > _capacity)
 				{
 					this->~vector();
-					_capacity = static_cast<size_type>(len);
 					_size = 0;
+					_capacity = len;
 					_array = _alloc.allocate(_capacity);
 					while (first != last)
 						_alloc.construct(&_array[_size++], *first++);
@@ -300,10 +295,17 @@ namespace ft
 
 			void swap (vector& x)
 			{
-				vector tmp;
-				tmp.swap_content(x);
-				x.swap_content(*this);
-				this->swap_content(tmp);
+				pointer tmp = _array;
+				this->_array = x._array;
+				x._array = tmp;
+
+				size_type tmp_size = _size;
+				this->_size = x._size;
+				x._size = tmp_size;
+
+				size_type tmp_capacity = _capacity;
+				this->_capacity = x._capacity;
+				x._capacity = tmp_capacity;
 			}
 
 			void clear()
@@ -317,11 +319,11 @@ namespace ft
 				return _alloc;
 			}
 
-		private:
-			size_type		_size;
-			size_type		_capacity;
+		protected:
 			allocator_type	_alloc;
 			pointer			_array;
+			size_type		_size;
+			size_type		_capacity;
 
 			void reAlloc(size_type n)
 			{
@@ -333,18 +335,6 @@ namespace ft
 				_array = tmp;
 				_capacity = n;
 			}
-
-			void swap_content(vector& x)
-			{
-				_size = x._size;
-				_alloc = x._alloc;
-				_capacity = x._capacity;
-				_array = x._array;
-
-				x._array = NULL;
-				x._size = 0;
-				x._capacity = 0;
-			}
 	};
 	// relational operators: ==, !=, <, <=, >, >=
 	template<class T, class A>
@@ -352,7 +342,7 @@ namespace ft
 	{
 		if (lhs.size() != rhs.size())
 			return false;
-		return equal(lhs.begin(), lhs.end(), rhs.begin());
+		return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 	}
 
 	template<class T, class A>
