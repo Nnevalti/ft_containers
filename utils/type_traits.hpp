@@ -9,24 +9,6 @@ namespace ft
 	template<bool Cond, class T = void> struct enable_if {};
 	template<class T> struct enable_if<true, T> { typedef T type; };
 
-	/*
-	** IS_INTEGRAL
-	** In C++ is integral actually inherits from true_type or false_type class :
-	** template <class T> struct is_integral : public false_type {};
-	** template <> struct is_integral<int> : public true_type {};
-	**
-	** True_type and false_type is a typedef of an integral_const instantiation :
-	** typedef integral_constant<bool,true> true_type;
-	**
-	** Integral_const is defined like this in type_traits header :
-	** template <class T, T v> struct integral_constant
-	** {
-	** 		static constexpr T value = v;
-	** 		typedef T value_type;
-	** 		typedef integral_constant<T,v> type;
-	** 		constexpr operator T() { return v; }
-	** };
-	*/
 	template <class T> struct is_integral { static const bool value = false; };
 
 	template <> struct is_integral<bool> { static const bool value = true; };
