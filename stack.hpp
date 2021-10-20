@@ -13,7 +13,25 @@ namespace ft
 			typedef Container		container_type;
 			typedef std::size_t		size_type;
 
+			// CONSTRUCTOR
+			// default
 			explicit stack(const container_type &cont = container_type()) : _c(cont) {}
+
+			// copy
+			stack(const stack& src) _c(src._c) {}
+
+			// DESTRUCTOR
+			~stack() {}
+
+			// = operator overload
+			stack operator=(const stack &lhs)
+			{
+				if (this != &lhs)
+				{
+					_c = lhs._c;
+				}
+				return *this;
+			}
 
 			bool empty() const
 			{
