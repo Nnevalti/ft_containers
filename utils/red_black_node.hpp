@@ -22,7 +22,7 @@ namespace ft
 
 			// CONSTRUCTOR
 			// default
-			explicit rb_Node(const value_type &val = value_type(), Color col = RED): data(val), parent(NULL), left(NULL), righ(NULL), color(col) {}
+			explicit rb_Node(const value_type &val = value_type(), Color col = RED, rb_Node *parent = NULL, rb_Node *left = NULL, rb_Node *right = NULL): data(val), parent(parent), left(left), righ(right), color(col) {}
 
 			// copy
 			rb_Node(cont rb_Node &src): data(src.data), parent(src.parent), left(src.left), right(src.right), color(RED) {}
@@ -51,20 +51,27 @@ namespace ft
 			bool operator<=(const node &lhs) { return data <= lhs.data; }
 			bool operator>=(const node &lhs) { return data >= lhs.data; }
 
-			const bool is_a_right_son() const { return parent != NULL && parent->right == this; }
-			const bool is_a_left_son() const { return parent != NULL && parent->left == this; }
-			rb_Node &min() { return left == NULL ? this : left->min(); }
-			rb_Node &max() { return right == NULL ? this : right->max(); }
+			const bool is_a_right_child() const { return parent != NULL && parent->right == this; }
+			const bool is_a_left_child() const { return parent != NULL && parent->left == this; }
+			rb_Node *min() { return left == NULL ? this : left->min(); }
+			rb_Node *max() { return right == NULL ? this : right->max(); }
 
-			rb_Node &getNextNode()
+			rb_Node *get_sibling()
+			{
+				if (parent == NULL)
+					return NULL;
+				return is_a_left_child() ? parent->right : parent->left;
+			}
+
+			rb_Node *getNextNode()
 			{
 				if (right != NULL)
 					return right->min();
-				if (is_a_left_son())
+				if (is_a_left_child())
 					return parent;
 
 				rb_Node *tmp(this);
-				while (tmp != NULL && tmp->is_a_right_son())
+				while (tmp != NULL && tmp->is_a_right_child())
 				{
 					tmp = tmp->parent;
 				}
@@ -73,15 +80,15 @@ namespace ft
 				return NULL;
 			}
 
-			rb_Node &getPreviousNode()
+			rb_Node *getPreviousNode()
 			{
 				if (left != NULL)
 					return left->max();
-				if (is_a_right_son())
+				if (is_a_right_child())
 					return parent;
 
 				rb_Node *tmp(this);
-				while (tmp != NULL && tmp->is_a_left_son())
+				while (tmp != NULL && tmp->is_a_left_child())
 				{
 					tmp = tmp->parent;
 				}

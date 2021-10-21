@@ -61,12 +61,12 @@ namespace ft
 
 			protected:
 				allocator_type			_alloc;
-				rb_Tree<value_type>		_rbTree;
+				rb_Tree<value_type, key_compare>		_rbTree;
 				size_type				_size;
 
 	};
 
-	// relational operator 
+	// relational operator
 }
 
 #endif
