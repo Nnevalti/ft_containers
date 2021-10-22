@@ -1,10 +1,12 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 
-#include "utils/pair.hpp"
+# include "utils/pair.hpp"
+# include "utils/red_black_node.hpp"
+# include "utils/red_black_tree.hpp"
 
-#include <functional>
-#include <memory>
+# include <functional>
+# include <memory>
 
 namespace ft
 {
@@ -14,9 +16,8 @@ namespace ft
 		public:
 			typedef Key											key_type;
 			typedef T											mapped_type;
-			typedef ft::pair<const Key, mapped_type>			value_type;
+			typedef ft::pair<const Key, T>						value_type;
 			typedef Compare										key_compare;
-			// value_compare ??
 			typedef Alloc										allocator_type;
 			typedef typename allocator_type::reference			reference;
 			typedef typename allocator_type::const_reference	const_reference;
@@ -31,6 +32,9 @@ namespace ft
 			typedef ft::reverseIterator<const_iterator>			const_reverse_iterator;
 
 			// CONSTRUCTOR
+			// default
+			explicit map (const allocator_type& alloc = allocator_type()) : _alloc(alloc), _rbTree(NULL), _size(0) {}
+
 			// DESTRUCTOR
 			// = operator overload
 
@@ -60,9 +64,9 @@ namespace ft
 			// get_allocator
 
 			protected:
-				allocator_type			_alloc;
-				rb_Tree<value_type, key_compare>		_rbTree;
-				size_type				_size;
+				allocator_type						_alloc;
+				rb_Tree<value_type>					_rbTree;
+				size_type							_size;
 
 	};
 
