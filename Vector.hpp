@@ -125,10 +125,7 @@ namespace ft
 
 			size_type capacity() const { return _capacity; }
 
-			bool empty() const
-			{
-				return (_size == 0);
-			}
+			bool empty() const { return (_size == 0); }
 
 			void reserve(size_type n)
 			{
@@ -314,10 +311,7 @@ namespace ft
 					pop_back();
 			}
 			// get_allocator
-			allocator_type get_allocator() const
-			{
-				return _alloc;
-			}
+			allocator_type get_allocator() const { return _alloc; }
 
 		protected:
 			allocator_type	_alloc;
