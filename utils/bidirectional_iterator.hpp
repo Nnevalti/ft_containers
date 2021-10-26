@@ -14,11 +14,11 @@ namespace ft
 			typedef const T&									const_reference;
 			typedef typename std::ptrdiff_t						difference_type;
 			typedef typename ft::bidirectional_iterator_tag		iterator_category;
-			typedef rb_Node<value_type>*						node_ptr;
+			typedef Node<value_type>*						node_ptr;
 
 		/* Contructor and Destructor */
 			// Default
-			bidirectionalIterator(): _ptr(NULL);
+			bidirectionalIterator(): _ptr(NULL) {}
 			// Type specific
 			bidirectionalIterator(node_ptr ptr): _ptr(ptr) {}
 			// Copy
@@ -72,15 +72,15 @@ namespace ft
 			reference operator*(){ return *_ptr; }
 			pointer operator->(){ return _ptr; }
 
-			value_type& value(rb_Node *)
-			{
-				return _ptr;
-			}
+			// value_type& value(Node *)
+			// {
+			// 	return _ptr;
+			// }
 
 			protected:
 			/* protected attributes */
 				node_ptr _ptr;
-	}
+	};
 }
 
 #endif

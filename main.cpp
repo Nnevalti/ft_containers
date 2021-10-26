@@ -1,11 +1,11 @@
 #include <iostream>
 #include <vector>
-#include "iterator_traits.hpp"
-#include "reverse_iterator.hpp"
-#include "type_traits.hpp"
-#include "algorithm.hpp"
-#include "random_access_iterator.hpp"
-#include "vector.hpp"
+#include "utils/iterator_traits.hpp"
+#include "utils/reverse_iterator.hpp"
+#include "utils/type_traits.hpp"
+#include "utils/algorithm.hpp"
+#include "utils/random_access_iterator.hpp"
+// #include "vector.hpp"
 
 // TEST for Vector:
 //	Constructors
@@ -338,23 +338,49 @@
 // 	return 0;
 // }
 
+//
+// int main(void)
+// {
+// 	std::vector<int> v(10, 42);
+// 	std::vector<int> v2(5, 21);
+//
+// 	std::cout << "size: " << v.size() << '\n' << "capacity: " << v.capacity() << std::endl;
+// 	std::cout << "size: " << v2.size() << '\n' << "capacity: " << v2.capacity() << std::endl;
+// 	v.resize(142);
+// 	v2.resize(88);
+// 	std::cout << "----------------------------" << '\n';
+// 	std::cout << "size: " << v.size() << '\n' << "capacity: " << v.capacity() << std::endl;
+// 	std::cout << "size: " << v2.size() << '\n' << "capacity: " << v2.capacity() << std::endl;
+// 	v.resize(88);
+// 	v2.resize(44);
+// 	std::cout << "----------------------------" << '\n';
+// 	std::cout << "size: " << v.size() << '\n' << "capacity: " << v.capacity() << std::endl;
+// 	std::cout << "size: " << v2.size() << '\n' << "capacity: " << v2.capacity() << std::endl;
+// 	return 0;
+// }
 
+
+#include "map.hpp"
+#include <map>
+
+// TEST FOR MAP
 int main(void)
 {
-	std::vector<int> v(10, 42);
-	std::vector<int> v2(5, 21);
+	std::map<char, int> map;
+	std::cout << map.size() << std::endl;
+	map['a'] = 21;
+	map['b'] = 42;
+	map['c'] = 84;
+	map['d'] = 168;
+	std::cout << map.size() << std::endl;
+	std::cout << map['b'] << std::endl;
+	std::cout << map['c'] << std::endl;
+	std::cout << map['d'] << std::endl;
+	std::cout << map['a'] << std::endl;
 
-	std::cout << "size: " << v.size() << '\n' << "capacity: " << v.capacity() << std::endl;
-	std::cout << "size: " << v2.size() << '\n' << "capacity: " << v2.capacity() << std::endl;
-	v.resize(142);
-	v2.resize(88);
-	std::cout << "----------------------------" << '\n';
-	std::cout << "size: " << v.size() << '\n' << "capacity: " << v.capacity() << std::endl;
-	std::cout << "size: " << v2.size() << '\n' << "capacity: " << v2.capacity() << std::endl;
-	v.resize(88);
-	v2.resize(44);
-	std::cout << "----------------------------" << '\n';
-	std::cout << "size: " << v.size() << '\n' << "capacity: " << v.capacity() << std::endl;
-	std::cout << "size: " << v2.size() << '\n' << "capacity: " << v2.capacity() << std::endl;
+	// std::pair<int, int> toInsert(1, 84);
+	// map.insert(ft::pair<int, int>(1, 84));
+	// std::cout << map.size() << std::endl;
+	// std::cout << map[1] << std::endl;
 	return 0;
 }

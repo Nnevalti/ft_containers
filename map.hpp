@@ -3,6 +3,7 @@
 
 # include "utils/pair.hpp"
 # include "utils/red_black_tree.hpp"
+# include "utils/bidirectional_iterator.hpp"
 
 # include <functional>
 # include <memory>
@@ -17,6 +18,7 @@ namespace ft
 			typedef T											mapped_type;
 			typedef ft::pair<const Key, T>						value_type;
 			typedef Compare										key_compare;
+			class												value_compare;
 			typedef Alloc										allocator_type;
 
 			typedef typename allocator_type::reference			reference;
@@ -31,13 +33,16 @@ namespace ft
 			typedef ft::reverseIterator<iterator>				reverse_iterator;
 			typedef ft::reverseIterator<const_iterator>			const_reverse_iterator;
 
+			typedef Node<value_type>	node_type;
+			typedef Node<value_type>*	node_ptr;
+
 			// CONSTRUCTOR
 			// default
-			explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _comp(comp) _alloc(alloc), _rbTree(NULL), _size(0) {}
+			explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _comp(comp), _alloc(alloc), _rbTree(), _size(0) {}
 
 			// range
 			template <class InputIterator>
-			map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()): _comp(comp) _alloc(alloc), size(0)
+			map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()): _comp(comp), _alloc(alloc), _size(0)
 			{
 				this->insert(first, last);
 			}
@@ -51,7 +56,6 @@ namespace ft
 			// DESTRUCTOR
 			~map()
 			{
-				~_rbTree();
 			}
 			// = operator overload
 			map& operator= (const map& x)
@@ -89,23 +93,57 @@ namespace ft
 			// max_size
 			size_type max_size() const { return _alloc.max_size(); }
 
+			mapped_type& operator[] (const key_type& k)
+			{
+				node_ptr node = _rbTree.search(k);
+				if (node != NULL)
+					return node->data.second;
+				_rbTree.insert(value_type(k, mapped_type()));
+				_size++;
+				node = _rbTree.search(k);
+				return node->data.second;
+			}
+
 			// insert
+			// pair<iterator, bool> insert(const value_type& val)
+			// {
+			// 	bool succes = _rbTree.insert(val);
+			// 	iterator it = find(val.first);
+			// 	return ft::pair<iterator, bool>(it, succes);
+			// }
+
+			bool insert(value_type& val)
+			{
+				bool success = _rbTree.insert(val);
+				return success;
+			}
 			// erase
+			// void erase(iterator position);
+			// size_type erase(const key_type& k)
+			// {
+			// 	_rbTree.delete(k);
+			// }
+
+			// void erase(iterator first, iterator last);
+
 			// swap
 			// clear
 
 			// key_comp
 			key_compare		key_comp() const { return this->_comp; }
-			// value_comp
+			// value(Node *)
+			// {
+			// 	return _ptr;
+			// }alue_comp
 			value_compare	value_comp() const { return value_compare(this->_comp); }
 
 			// find
-			iterator find(const Key_type& k)
+			iterator find(const key_type& k)
 			{
-				Node node = _rbTree.search(k);
+				Node<value_type> node = _rbTree.search(k);
 				return (iterator(node->data));
 			}
-			
+
 			// count
 			// lower_bound
 			// upper_bound
@@ -117,12 +155,31 @@ namespace ft
 			protected:
 				key_compare											_comp;
 				allocator_type										_alloc;
-				rb_Tree<value_type, key_compare, allocator_type>	_rbTree;
+				RBTree<key_type, value_type, key_compare>			_rbTree;
 				size_type											_size;
 
 	};
 
 	// relational operator
+
+	// other
+	template <class Key, class T, class Compare, class Alloc>
+	class map<Key, T, Compare, Alloc>::value_compare
+	{
+		friend class map;
+
+		protected:
+			Compare _comp;
+			value_compare (Compare c): _comp(c) {}
+		public:
+			typedef bool			result_type;
+			typedef value_type		first_argument_type;
+			typedef value_type		second_argument_type;
+			bool operator() (const value_type& x, const value_type& y) const
+			{
+				return _comp(x.first, y.first);
+			}
+	};
 }
 
 #endif
