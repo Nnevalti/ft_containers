@@ -1,6 +1,9 @@
 #ifndef RED_BLACK_TREE_HPP
 # define RED_BLACK_TREE_HPP
 
+# include <functional>
+# include <iostream>
+
 namespace ft
 {
 
@@ -15,11 +18,12 @@ namespace ft
 	{
 		typedef	T value_type;
 
+		value_type data;
+
 		struct Node *parent;
 		struct Node *left;
 		struct Node *right;
 
-		value_type data;
 		Color color;
 
 		explicit Node(value_type data, Node* parent, Node* left, Node* right, Color color): data(data), parent(parent), left(left), right(right), color(color) {}
@@ -70,14 +74,19 @@ namespace ft
 				return (this->_root);
 			}
 
-			node_ptr min(node_ptr node)
+			node_ptr getNil()
+			{
+				return (this->_nil);
+			}
+
+			node_ptr min(node_ptr node) const
 			{
 				while (node->left != _nil)
 					node = node->left;
 				return node;
 			}
 
-			node_ptr max(node_ptr node)
+			node_ptr max(node_ptr node) const
 			{
 				while (node->right != _nil)
 					node = node->right;
@@ -93,7 +102,7 @@ namespace ft
 				if (y->left != _nil)
 					y->left->parent = x;
 				y->parent = x->parent; // x old parent is now y new parent
-				if (x->parent == _nil)
+				if (x->parent == NULL)
 					this->_root = y;
 				else if (x == x->parent->left) // see if x was a left or right child to replace it by y
 					x->parent->left = y;
@@ -112,7 +121,7 @@ namespace ft
 				if (y->right != _nil)
 					y->right->parent = x;
 				y->parent = x->parent; // x old parent is now y new parent
-				if (x->parent == _nil)
+				if (x->parent == NULL)
 					this->_root = y;
 				else if (x == x->parent->right) // see if x was a right or left child to replace it by y
 					x->parent->right = y;
@@ -379,6 +388,35 @@ namespace ft
 			key_type	keyFromValue(const key_type& k) const { return k; }
 			key_type	keyFromValue(const value_type& p) const { return p.first; }
 
+			void printHelper(node_ptr root, std::string indent, bool last)
+			{
+					// print the tree structure on the screen
+					if (root != _nil)
+					{
+						std::cout << indent;
+						if (last)
+						{
+							std::cout << "R----";
+							indent += "     ";
+						}
+						else
+						{
+							std::cout << "L----";
+							indent += "|    ";
+						}
+						std::string sColor = root->color?"RED":"BLACK";
+						std::cout << root->data.first << "(" << sColor << ")" << std::endl;
+						printHelper(root->left, indent, false);
+						printHelper(root->right, indent, true);
+					}
+					// cout<<root->left->data<<endl;
+				}
+				void prettyPrint()
+				{
+					if (_root) {
+						printHelper(this->_root, "", true);
+					}
+				}
 	};
 }
 

@@ -366,17 +366,33 @@
 // TEST FOR MAP
 int main(void)
 {
-	std::map<char, int> map;
-	std::cout << map.size() << std::endl;
+	ft::map<char, int> map;
+	std::cout << "size: " << map.size() << std::endl;
 	map['a'] = 21;
 	map['b'] = 42;
 	map['c'] = 84;
 	map['d'] = 168;
-	std::cout << map.size() << std::endl;
+	std::cout << "size: " << map.size() << std::endl;
 	std::cout << map['b'] << std::endl;
 	std::cout << map['c'] << std::endl;
 	std::cout << map['d'] << std::endl;
 	std::cout << map['a'] << std::endl;
+
+	std::cout << "test it" << std::endl;
+	// ft::map<char, int>::iterator it;
+	ft::map<char, int>::const_iterator it;
+	for (it = map.begin(); it != map.end(); it++)
+	{
+		std::cout << "map['" << it->first << "'] contains " << it->second << std::endl;
+	}
+
+	std::cout << "test rit" << std::endl;
+	// ft::map<char, int>::iterator rit;
+	ft::map<char, int>::const_iterator rit;
+	for (rit = map.end(); rit != map.begin(); --rit)
+	{
+		std::cout << "map['" << rit->first << "'] contains " << rit->second << std::endl;
+	}
 
 	// std::pair<int, int> toInsert(1, 84);
 	// map.insert(ft::pair<int, int>(1, 84));

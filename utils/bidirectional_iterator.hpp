@@ -1,6 +1,9 @@
 #ifndef BIDIRECTIONAL_ITERATOR_HPP
 # define BIDIRECTIONAL_ITERATOR_HPP
 
+# include <functional>
+# include "iterator_traits.hpp"
+
 namespace ft
 {
 	template <class T>
@@ -14,15 +17,15 @@ namespace ft
 			typedef const T&									const_reference;
 			typedef typename std::ptrdiff_t						difference_type;
 			typedef typename ft::bidirectional_iterator_tag		iterator_category;
-			typedef Node<value_type>*						node_ptr;
+			typedef Node<value_type>*							node_ptr;
 
 		/* Contructor and Destructor */
 			// Default
-			bidirectionalIterator(): _ptr(NULL) {}
+			bidirectionalIterator(): _root(NULL), _nil(NULL), _ptr(NULL) {}
 			// Type specific
-			bidirectionalIterator(node_ptr ptr): _ptr(ptr) {}
+			bidirectionalIterator(node_ptr root, node_ptr nil, node_ptr ptr): _root(root), _nil(nil), _ptr(ptr) {}
 			// Copy
-			bidirectionalIterator(const bidirectionalIterator &src): _ptr(src._ptr) {}
+			bidirectionalIterator(const bidirectionalIterator &src):_root(src._root), _nil(src._nil), _ptr(src._ptr) {}
 			// Destructor
 			virtual ~bidirectionalIterator() {}
 
@@ -31,7 +34,11 @@ namespace ft
 			bidirectionalIterator operator=(const bidirectionalIterator &src)
 			{
 				if (this != &src)
+				{
+					_root = src._root;
+					_nil = src._nil;
 					_ptr = src._ptr;
+				}
 				return *this;
 			}
 
@@ -39,7 +46,7 @@ namespace ft
 			// based on an iterator
 			operator bidirectionalIterator<value_type const>() const
 			{
-				return bidirectionalIterator<value_type const>(_ptr);
+				return bidirectionalIterator<value_type const>(_root, _nil, _ptr);
 			}
 
 			// Relational operator
@@ -50,36 +57,98 @@ namespace ft
 			template <class Iterator_lhs, class Iterator_rhs>
 			friend bool operator==(const bidirectionalIterator<Iterator_lhs>& lhs, const bidirectionalIterator<Iterator_rhs>& rhs) { return lhs._ptr == rhs._ptr; }
 			template <class Iterator_lhs, class Iterator_rhs>
-			friend bool operator!=(const bidirectionalIterator<Iterator_lhs>& lhs, const bidirectionalIterator<Iterator_rhs>& rhs) { return lhs._ptr != rhs._ptr; }
+			friend bool operator!=(const bidirectionalIterator<Iterator_lhs>& lhs, const bidirectionalIterator<Iterator_rhs>& rhs) { return !(lhs._ptr == rhs._ptr); }
 
 			// Increment / Decrement
-			bidirectionalIterator& operator++() { _ptr = _ptr->getNextNode(); return *this; }
+			bidirectionalIterator& operator++()
+			{
+				if (_ptr != _nil)
+					_ptr = successor(_ptr);
+				return *this;
+			}
+
 			bidirectionalIterator operator++(int)
 			{
 				bidirectionalIterator tmp(*this);
-				++_ptr;
+				operator++();
 				return (tmp);
 			}
-			bidirectionalIterator& operator--() { --_ptr; return *this;}
+
+			bidirectionalIterator &operator--()
+			{
+				if (_ptr == _nil)
+					_ptr = maximum(_root);
+				else
+					_ptr = predecessor(_ptr);
+				return (*this);
+			}
+
 			bidirectionalIterator operator--(int)
 			{
 				bidirectionalIterator tmp(*this);
-				--_ptr;
+				operator--();
 				return (tmp);
 			}
 
 			// Access
-			reference operator*(){ return *_ptr; }
-			pointer operator->(){ return _ptr; }
-
-			// value_type& value(Node *)
-			// {
-			// 	return _ptr;
-			// }
+			reference operator*(){ return this->_ptr->data; }
+			pointer operator->(){ return &(this->_ptr->data); }
 
 			protected:
 			/* protected attributes */
-				node_ptr _ptr;
+				node_ptr	_root;
+				node_ptr	_nil;
+				node_ptr	_ptr;
+
+				// same as in rbTree class
+				node_ptr minimum(node_ptr node)
+				{
+					while (node->left != _nil)
+						node = node->left;
+					return node;
+				}
+
+				// same as in rbTree class
+				node_ptr maximum(node_ptr node)
+				{
+					while (node->right != _nil)
+						node = node->right;
+					return node;
+				}
+
+				// same as in rbTree class
+				node_ptr successor(node_ptr x)
+				{
+					if (x->right != _nil)
+					{
+						return minimum(x->right);
+					}
+					node_ptr y = x->parent;
+					while (y != NULL && x == y->right)
+					{
+						x = y;
+						y = y->parent;
+					}
+					if (y == NULL)
+						return _nil;
+					return y;
+				}
+
+				// same as in rbTree class
+				node_ptr predecessor(node_ptr x)
+				{
+					if (x->left != _nil)
+					{
+						return maximum(x->left);
+					}
+					node_ptr y = x->parent;
+					while (y != _nil && x == y->left)
+					{
+						x = y;
+						y = y->parent;
+					}
+					return y;
+				}
 	};
 }
 

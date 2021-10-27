@@ -1,9 +1,14 @@
 #ifndef MAP_HPP
 # define MAP_HPP
 
+# include <memory>
+
+# include "utils/algorithm.hpp"
 # include "utils/pair.hpp"
 # include "utils/red_black_tree.hpp"
+# include "utils/iterator_traits.hpp"
 # include "utils/bidirectional_iterator.hpp"
+# include "utils/reverse_iterator.hpp"
 
 # include <functional>
 # include <memory>
@@ -56,6 +61,7 @@ namespace ft
 			// DESTRUCTOR
 			~map()
 			{
+				_rbTree.prettyPrint();
 			}
 			// = operator overload
 			map& operator= (const map& x)
@@ -71,12 +77,12 @@ namespace ft
 			}
 
 			// begin
-			iterator				begin() { return iterator(this->_rbTree->_root->data); }
-			const_iterator			begin() const { return const_iterator(this->_rbTree->_root->data); }
+			iterator				begin() { return iterator(_rbTree.getRoot(), _rbTree.getNil(), _rbTree.min(_rbTree.getRoot())); }
+			const_iterator			begin() const { return const_iterator(_rbTree.getRoot(), _rbTree.getNil(), _rbTree.min(_rbTree.getRoot())); }
 
 			// end
-			iterator				end() { return iterator(this->_rbTree->_root->max()->data); }
-			const_iterator			end() const { return const_iterator(this->_rbTree->_root->max()->data); }
+			iterator				end() { return iterator(_rbTree.getRoot(), _rbTree.getNil(), _rbTree.getNil()); }
+			const_iterator			end() const { return const_iterator(_rbTree.getRoot(), _rbTree.getNil(), _rbTree.getNil()); }
 
 			// rbegin
 			reverse_iterator		rbegin() { return reverse_iterator(end()); }
@@ -105,17 +111,30 @@ namespace ft
 			}
 
 			// insert
-			// pair<iterator, bool> insert(const value_type& val)
+			pair<iterator, bool> insert(const value_type& val)
+			{
+				bool succes = _rbTree.insert(val);
+				iterator it = find(val.first);
+				return ft::pair<iterator, bool>(it, succes);
+			}
+
+			// bool insert(value_type& val)
 			// {
-			// 	bool succes = _rbTree.insert(val);
-			// 	iterator it = find(val.first);
-			// 	return ft::pair<iterator, bool>(it, succes);
+			// 	bool success = _rbTree.insert(val);
+			// 	return success;
 			// }
 
-			bool insert(value_type& val)
+			iterator insert (iterator position, const value_type& val)
 			{
-				bool success = _rbTree.insert(val);
-				return success;
+				(void)position;
+				return insert(val).first;
+			}
+
+			template <class InputIterator>
+			void insert (InputIterator first, InputIterator last)
+			{
+				while (first != last)
+					insert(*++first);
 			}
 			// erase
 			// void erase(iterator position);
@@ -140,8 +159,8 @@ namespace ft
 			// find
 			iterator find(const key_type& k)
 			{
-				Node<value_type> node = _rbTree.search(k);
-				return (iterator(node->data));
+				node_ptr node = _rbTree.search(k);
+				return (iterator(_rbTree._root, _rbTree._nil, node));
 			}
 
 			// count

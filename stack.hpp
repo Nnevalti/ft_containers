@@ -18,7 +18,7 @@ namespace ft
 			explicit stack(const container_type &cont = container_type()) : _c(cont) {}
 
 			// copy
-			stack(const stack& src) _c(src._c) {}
+			stack(const stack& src): _c(src._c) {}
 
 			// DESTRUCTOR
 			~stack() {}
