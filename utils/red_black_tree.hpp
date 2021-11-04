@@ -26,10 +26,10 @@ namespace ft
 
 		Color color;
 
-		explicit Node(value_type data, Node* parent, Node* left, Node* right, Color color): data(data), parent(parent), left(left), right(right), color(color) {}
+		Node(value_type data, Node* parent, Node* left, Node* right, Color color): data(data), parent(parent), left(left), right(right), color(color) {}
 	};
 
-	template <class Key, class Value, class Compare = std::less<Key>, class Alloc = std::allocator<Node<Value> > >
+	template <class Key, class Value, class KeyOfValue, class Compare = std::less<Key>, class Alloc = std::allocator<Node<Value> > >
 	class RBTree
 	{
 
@@ -69,18 +69,45 @@ namespace ft
 				_alloc.deallocate(_nil, 1);
 			}
 
-			node_ptr getRoot()
+			node_ptr getRoot() const
 			{
 				return (this->_root);
 			}
 
-			node_ptr getNil()
+			node_ptr getNil() const
 			{
 				return (this->_nil);
 			}
 
+			size_type size() const { return _size; }
+		    size_type max_size() const { return _alloc.max_size(); }
+
+			node_ptr min() const
+			{
+				node_ptr node = _root;
+				if (_root == _nil)
+					return _root;
+				while (node->left != _nil)
+					node = node->left;
+				return node;
+			}
+
+			node_ptr max() const
+			{
+				node_ptr node = _root;
+				if (_root == _nil)
+					return _root;
+
+				while (node->right != _nil)
+					node = node->right;
+				return node;
+			}
+
 			node_ptr min(node_ptr node) const
 			{
+				if (node == _nil)
+					return _root;
+
 				while (node->left != _nil)
 					node = node->left;
 				return node;
@@ -88,6 +115,9 @@ namespace ft
 
 			node_ptr max(node_ptr node) const
 			{
+				if (node == _nil)
+					return _root;
+
 				while (node->right != _nil)
 					node = node->right;
 				return node;
@@ -191,9 +221,9 @@ namespace ft
 				while (x != _nil)
 				{
 					y = x;
-					if (_comp(keyFromValue(node->data), keyFromValue(x->data)))
+					if (_comp(KeyOfValue()(node->data), KeyOfValue()(x->data)))
 						x = x->left;
-					else if (_comp(keyFromValue(x->data), keyFromValue(node->data)))
+					else if (_comp(KeyOfValue()(x->data), KeyOfValue()(node->data)))
 						x = x->right;
 					else
 					{
@@ -205,7 +235,7 @@ namespace ft
 				node->parent = y;
 				if (y == NULL)
 					this->_root = node;
-				else if (_comp(keyFromValue(node->data), keyFromValue(y->data)))
+				else if (_comp(KeyOfValue()(node->data), KeyOfValue()(y->data)))
 					y->left = node;
 				else
 					y->right = node;
@@ -221,13 +251,14 @@ namespace ft
 				return true;
 			}
 
-			// void delete(const key_type& key)
-			// {
-			// 	deleteNodeHelper(this->_root, key);
-			// 	return ;
-			// }
+			void deleteNode(const key_type& key)
+			{
+				(void)key;
+				// deleteNodeHelper(key);
+				return ;
+			}
 
-			node_ptr search(const key_type& key)
+			node_ptr search(const key_type& key) const
 			{
 				return searchRecursive(this->_root, key);
 			}
@@ -295,21 +326,12 @@ namespace ft
 				v->parent = u->parent;
 			}
 
-			void deleteNodeHelper(node_ptr node, const key_type& key)
+			void deleteNodeHelper(const key_type& key)
 			{
 				// find the node containing key
-				node_ptr z = NULL;
-				node_ptr x, y;
-				while (node != _nil)
-				{
-					if (_comp(keyFromValue(node->data), key))
-						node = node->right;
-					else if (_comp(key, keyFromValue(node->data)))
-						node = node->left;
-					else
-						z = node;
-				}
+				node_ptr z, x, y;
 
+				z = search(key);
 				if (z == NULL)
 				{
 					std::cout << "Couldn't find key in the tree" << std::endl;
@@ -330,7 +352,7 @@ namespace ft
 				}
 				else // suppressed node had 2 children and is replaced by the minimum of it's right branch
 				{
-					y = minimum(z->right); // search for the minimum in the right child's branch
+					y = min(z->right); // search for the minimum in the right child's branch
 					y_og_color = y->color;
 					x = y->right; // x saves the minimum's right branch
 					if (y->parent == z) // the minimum is z->right
@@ -350,18 +372,91 @@ namespace ft
 				_alloc.deallocate(z, 1);
 				_size--;
 				if (y_og_color == BLACK) // fix the lost black color on x
-					fixDelete(x);
+					fixDelete(x);			}
+
+			// fix the rb tree modified by the delete operation
+			void fixDelete(node_ptr x)
+			{
+				node_ptr w;
+				while (x != this->_root && x->color == BLACK)
+				{
+					if (x == x->parent->left) // if x is the left child
+					{
+						w = x->parent->right; // w is x's right brother
+						if (w->color == RED)
+						{
+							w->color = BLACK;
+							x->parent->color = RED;
+							left_rotation(x->parent); // new parent is w, old parent p became w's left child, p is still x's parent and x->parent->right bacame old w->left
+							w = x->parent->right;
+						}
+
+						if (w->left->color == BLACK && w->right->color == BLACK)
+						{
+							w->color = RED;
+							x = x->parent;
+						}
+						else // at least one child is RED
+						{
+							if (w->right->color == BLACK) // left child is RED
+							{
+								w->left->color = BLACK;
+								w->color = RED;
+								right_rotation(x);
+								w = x->parent->right;
+							}
+							w->color = x->parent->color;
+							x->parent->color = BLACK;
+							w->right->color = BLACK;
+							left_rotation(x->parent);
+							x = _root;
+						}
+					}
+					else // mirror case
+					{
+						w = x->parent->left;
+						if (w->color == RED)
+						{
+							w->color = BLACK;
+							x->parent->color = RED;
+							right_rotation(x->parent);
+							w = x->parent->left;
+						}
+
+						if (w->left->color == BLACK && w->right->color == BLACK)
+						{
+							w->color = RED;
+							x = x->parent;
+						}
+						else
+						{
+							if (w->left->color == BLACK)
+							{
+								w->right->color = BLACK;
+								w->color = RED;
+								left_rotation(x);
+								w = x->parent->left;
+							}
+							w->color = x->parent->color;
+							x->parent->color = BLACK;
+							w->left->color = BLACK;
+							right_rotation(x->parent);
+							x = _root;
+						}
+					}
+				}
+				x->color = BLACK; // root is BLACK
 			}
 
-			node_ptr searchRecursive(node_ptr node, const key_type& key)
+			node_ptr searchRecursive(node_ptr node, const key_type& key) const
 			{
 				if (node == _nil)
 					return NULL;
-				else if (!_comp(key, keyFromValue(node->data)) && !_comp(keyFromValue(node->data), key))
+				else if (!_comp(key, KeyOfValue()(node->data)) && !_comp(KeyOfValue()(node->data), key))
 					return node;
 				if (node != _nil)
 				{
-					if (_comp(key, keyFromValue(node->data)))
+					if (_comp(key, KeyOfValue()(node->data)))
 						return searchRecursive(node->left, key);
 					return searchRecursive(node->right, key);
 				}
@@ -384,9 +479,6 @@ namespace ft
 
 				_size--;
 			}
-
-			key_type	keyFromValue(const key_type& k) const { return k; }
-			key_type	keyFromValue(const value_type& p) const { return p.first; }
 
 			void printHelper(node_ptr root, std::string indent, bool last)
 			{

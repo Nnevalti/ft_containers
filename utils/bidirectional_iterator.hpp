@@ -1,12 +1,17 @@
 #ifndef BIDIRECTIONAL_ITERATOR_HPP
 # define BIDIRECTIONAL_ITERATOR_HPP
 
+# include <iterator>
+# include <cstddef>
 # include <functional>
+
 # include "iterator_traits.hpp"
+# include "red_black_tree.hpp"
+
 
 namespace ft
 {
-	template <class T>
+	template <class T, class N>
 	class bidirectionalIterator
 	{
 		public:
@@ -17,7 +22,9 @@ namespace ft
 			typedef const T&									const_reference;
 			typedef typename std::ptrdiff_t						difference_type;
 			typedef typename ft::bidirectional_iterator_tag		iterator_category;
-			typedef Node<value_type>*							node_ptr;
+
+			typedef N node_type;
+			typedef node_type* node_ptr;
 
 		/* Contructor and Destructor */
 			// Default
@@ -44,20 +51,21 @@ namespace ft
 
 			// Overload called when trying to copy construct a const_iterator
 			// based on an iterator
-			operator bidirectionalIterator<value_type const>() const
+			operator bidirectionalIterator<value_type const, node_type const>() const
 			{
-				return bidirectionalIterator<value_type const>(_root, _nil, _ptr);
+				return bidirectionalIterator<value_type const, node_type const>(_root, _nil, _ptr);
 			}
 
 			// Relational operator
-			bool operator==(const bidirectionalIterator& src) const { return _ptr == src._ptr; }
-			bool operator!=(const bidirectionalIterator& src) const { return _ptr != src._ptr; }
+			bool operator==(const bidirectionalIterator& lhs) const { return _ptr == lhs._ptr; }
+			bool operator!=(const bidirectionalIterator& lhs) const { return _ptr != lhs._ptr; }
 
 			// Const and non const relational operator
-			template <class Iterator_lhs, class Iterator_rhs>
-			friend bool operator==(const bidirectionalIterator<Iterator_lhs>& lhs, const bidirectionalIterator<Iterator_rhs>& rhs) { return lhs._ptr == rhs._ptr; }
-			template <class Iterator_lhs, class Iterator_rhs>
-			friend bool operator!=(const bidirectionalIterator<Iterator_lhs>& lhs, const bidirectionalIterator<Iterator_rhs>& rhs) { return !(lhs._ptr == rhs._ptr); }
+			template<class Iterator, class Iter>
+			friend bool operator==(ft::bidirectionalIterator<Iterator, ft::Node<Iterator> > const &lhs, ft::bidirectionalIterator<Iter, ft::Node<Iter> > const &rhs);
+
+			template<class Iterator, class Iter>
+			friend bool operator!=(ft::bidirectionalIterator<Iterator, ft::Node<Iterator> > const &lhs, ft::bidirectionalIterator<Iter, ft::Node<Iter> > const &rhs);
 
 			// Increment / Decrement
 			bidirectionalIterator& operator++()
@@ -91,8 +99,11 @@ namespace ft
 			}
 
 			// Access
-			reference operator*(){ return this->_ptr->data; }
-			pointer operator->(){ return &(this->_ptr->data); }
+			reference operator*() { return this->_ptr->data; }
+			const_reference operator*() const { return this->_ptr->data; }
+
+			pointer operator->() { return &(operator*()); }
+			const_pointer operator->() const { return &(operator*()); }
 
 			protected:
 			/* protected attributes */
@@ -150,6 +161,18 @@ namespace ft
 					return y;
 				}
 	};
+
+	template<class Iterator, class Iter>
+	bool operator==(ft::bidirectionalIterator<Iterator, ft::Node<Iterator> > const &lhs, ft::bidirectionalIterator<Iter, ft::Node<Iter> > const &rhs)
+	{
+		return (lhs._ptr == rhs._ptr);
+	}
+
+	template<class Iterator, class Iter>
+	bool operator!=(ft::bidirectionalIterator<Iterator, ft::Node<Iterator> > const &lhs, ft::bidirectionalIterator<Iter, ft::Node<Iter> > const &rhs)
+	{
+		return (lhs._ptr != rhs._ptr);
+	}
 }
 
 #endif

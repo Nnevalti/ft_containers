@@ -386,14 +386,14 @@ int main(void)
 		std::cout << "map['" << it->first << "'] contains " << it->second << std::endl;
 	}
 
-	std::cout << "test rit" << std::endl;
-	// ft::map<char, int>::iterator rit;
-	ft::map<char, int>::const_iterator rit;
-	for (rit = map.begin(); rit != map.end(); ++rit)
-	{
-		std::cout << "map['" << rit->first << "'] contains " << rit->second << std::endl;
-	}
+	ft::map<char, int> map2;
+	map2 = map;
 
+	ft::map<char, int>::const_iterator rit;
+	for (rit = map2.begin(); rit != map2.end(); ++rit)
+	{
+		std::cout << "map2['" << rit->first << "'] contains " << rit->second << std::endl;
+	}
 	// std::pair<int, int> toInsert(1, 84);
 	// map.insert(ft::pair<int, int>(1, 84));
 	// std::cout << map.size() << std::endl;
