@@ -2,6 +2,7 @@
 # define VECTOR_HPP
 
 # include <memory>
+# include <limits>
 # include "utils/algorithm.hpp"
 # include "utils/type_traits.hpp"
 # include "utils/random_access_iterator.hpp"

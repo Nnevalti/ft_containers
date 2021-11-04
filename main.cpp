@@ -379,8 +379,8 @@ int main(void)
 	std::cout << map['a'] << std::endl;
 
 	std::cout << "test it" << std::endl;
-	// ft::map<char, int>::iterator it;
-	ft::map<char, int>::const_iterator it;
+	ft::map<char, int>::iterator it;
+	// ft::map<char, int>::const_iterator it;
 	for (it = map.begin(); it != map.end(); it++)
 	{
 		std::cout << "map['" << it->first << "'] contains " << it->second << std::endl;
@@ -389,7 +389,7 @@ int main(void)
 	std::cout << "test rit" << std::endl;
 	// ft::map<char, int>::iterator rit;
 	ft::map<char, int>::const_iterator rit;
-	for (rit = map.end(); rit != map.begin(); --rit)
+	for (rit = map.begin(); rit != map.end(); ++rit)
 	{
 		std::cout << "map['" << rit->first << "'] contains " << rit->second << std::endl;
 	}
