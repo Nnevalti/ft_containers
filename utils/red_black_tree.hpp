@@ -80,6 +80,7 @@ namespace ft
 			}
 
 			size_type size() const { return _size; }
+
 		    size_type max_size() const { return _alloc.max_size(); }
 
 			node_ptr min() const
@@ -251,11 +252,9 @@ namespace ft
 				return true;
 			}
 
-			void deleteNode(const key_type& key)
+			bool deleteNode(const key_type& key)
 			{
-				(void)key;
-				// deleteNodeHelper(key);
-				return ;
+				return deleteNodeHelper(key);
 			}
 
 			node_ptr search(const key_type& key) const
@@ -326,26 +325,26 @@ namespace ft
 				v->parent = u->parent;
 			}
 
-			void deleteNodeHelper(const key_type& key)
+			bool deleteNodeHelper(const key_type& key)
 			{
 				// find the node containing key
 				node_ptr z, x, y;
 
 				z = search(key);
-				if (z == NULL)
+				if (z == _nil)
 				{
-					std::cout << "Couldn't find key in the tree" << std::endl;
-					return;
+					// std::cout << "Couldn't find key in the tree" << std::endl;
+					return false;
 				}
 
 				y = z; // y saves the suppressed node's placement
 				Color y_og_color = y->color;
-				if (z->left == NULL) // z only had 1 child whitch is the right one so so it get's replaced by it's child
+				if (z->left == _nil) // z only had 1 child whitch is the right one so so it get's replaced by it's child
 				{
 					x = z->right; // x saves the right child's branch
 					rbTransplant(z, z->right);
 				}
-				else if (z->right == NULL) //mirror case
+				else if (z->right == _nil) //mirror case
 				{
 					x = z->left;
 					rbTransplant(z, z->left);
@@ -372,12 +371,15 @@ namespace ft
 				_alloc.deallocate(z, 1);
 				_size--;
 				if (y_og_color == BLACK) // fix the lost black color on x
-					fixDelete(x);			}
+					fixDelete(x);
+				return true;
+			}
 
 			// fix the rb tree modified by the delete operation
 			void fixDelete(node_ptr x)
 			{
 				node_ptr w;
+
 				while (x != this->_root && x->color == BLACK)
 				{
 					if (x == x->parent->left) // if x is the left child
@@ -402,7 +404,7 @@ namespace ft
 							{
 								w->left->color = BLACK;
 								w->color = RED;
-								right_rotation(x);
+								right_rotation(w);
 								w = x->parent->right;
 							}
 							w->color = x->parent->color;
@@ -434,7 +436,7 @@ namespace ft
 							{
 								w->right->color = BLACK;
 								w->color = RED;
-								left_rotation(x);
+								left_rotation(w);
 								w = x->parent->left;
 							}
 							w->color = x->parent->color;
@@ -451,8 +453,8 @@ namespace ft
 			node_ptr searchRecursive(node_ptr node, const key_type& key) const
 			{
 				if (node == _nil)
-					return NULL;
-				else if (!_comp(key, KeyOfValue()(node->data)) && !_comp(KeyOfValue()(node->data), key))
+					return _nil;
+				else if (key == KeyOfValue()(node->data))
 					return node;
 				if (node != _nil)
 				{
@@ -460,7 +462,7 @@ namespace ft
 						return searchRecursive(node->left, key);
 					return searchRecursive(node->right, key);
 				}
-				return NULL;
+				return _nil;
 			}
 
 			void clearRecursive(node_ptr const &node)
@@ -482,33 +484,50 @@ namespace ft
 
 			void printHelper(node_ptr root, std::string indent, bool last)
 			{
-					// print the tree structure on the screen
-					if (root != _nil)
-					{
-						std::cout << indent;
-						if (last)
-						{
-							std::cout << "R----";
-							indent += "     ";
-						}
-						else
-						{
-							std::cout << "L----";
-							indent += "|    ";
-						}
-						std::string sColor = root->color?"RED":"BLACK";
-						std::cout << root->data.first << "(" << sColor << ")" << std::endl;
-						printHelper(root->left, indent, false);
-						printHelper(root->right, indent, true);
-					}
-					// cout<<root->left->data<<endl;
-				}
-				void prettyPrint()
+				// print the tree structure on the screen
+				if (root != _nil)
 				{
-					if (_root) {
-						printHelper(this->_root, "", true);
+					std::cout << indent;
+					if (last)
+					{
+						std::cout << "R----";
+						indent += "     ";
 					}
+					else
+					{
+						std::cout << "L----";
+						indent += "|    ";
+					}
+					std::string sColor = root->color?"RED":"BLACK";
+					std::cout << root->data.first << "(" << sColor << ")" << std::endl;
+					printHelper(root->left, indent, false);
+					printHelper(root->right, indent, true);
 				}
+				// cout<<root->left->data<<endl;
+			}
+
+			void prettyPrint()
+			{
+				if (_root) {
+					printHelper(this->_root, "", true);
+				}
+			}
+
+			void swap (RBTree& x)
+			{
+				node_ptr		tmp_root = _root;
+				this->_root = x._root;
+				x._root = tmp_root;
+
+				node_ptr		tmp_nil = _nil;
+				this->_nil = x._nil;
+				x._nil = tmp_nil;
+
+				size_type		tmp_size = _size;
+				this->_size = x._size;
+				x._size = tmp_size;
+			}
+
 	};
 }
 

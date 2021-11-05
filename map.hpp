@@ -121,7 +121,7 @@ namespace ft
 			mapped_type& operator[] (const key_type& k)
 			{
 				node_ptr node = _rbTree.search(k);
-				if (node != NULL)
+				if (node != _rbTree.getNil())
 					return node->data.second;
 				_rbTree.insert(value_type(k, mapped_type()));
 				node = _rbTree.search(k);
@@ -157,8 +157,10 @@ namespace ft
 
 			size_type erase(const key_type& k)
 			{
-				_rbTree.deleteNode(k);
-				return 1;
+
+				if (_rbTree.deleteNode(k))
+					return 1;
+				return 0;
 			}
 
 			void erase (iterator first, iterator last)
@@ -170,9 +172,10 @@ namespace ft
 			// swap
 			void swap (map& x)
 			{
-				map tmp = *this;
-				*this = x;
-				x = *this;
+				_rbTree.swap(x._rbTree);
+				// map tmp = *this;
+				// *this = x;
+				// x = tmp;
 			}
 			// clear
 			void clear()
@@ -194,12 +197,16 @@ namespace ft
 			iterator find(const key_type& k)
 			{
 				node_ptr node = _rbTree.search(k);
+				if (node == _rbTree.getNil())
+					return end();
 				return (iterator(_rbTree.getRoot(), _rbTree.getNil(), node));
 			}
 
 			const_iterator find (const key_type& k) const
 			{
 				node_ptr node = _rbTree.search(k);
+				if (node == _rbTree.getNil())
+					return end();
 				return (const_iterator(_rbTree.getRoot(), _rbTree.getNil(), node));
 			}
 
