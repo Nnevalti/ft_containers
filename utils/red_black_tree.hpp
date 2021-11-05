@@ -332,10 +332,7 @@ namespace ft
 
 				z = search(key);
 				if (z == _nil)
-				{
-					// std::cout << "Couldn't find key in the tree" << std::endl;
 					return false;
-				}
 
 				y = z; // y saves the suppressed node's placement
 				Color y_og_color = y->color;
@@ -503,7 +500,6 @@ namespace ft
 					printHelper(root->left, indent, false);
 					printHelper(root->right, indent, true);
 				}
-				// cout<<root->left->data<<endl;
 			}
 
 			void prettyPrint()

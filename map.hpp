@@ -181,14 +181,8 @@ namespace ft
 				erase(begin(), end());
 			}
 
-
-			// key_comp
+			// key_comp and value_comp
 			key_compare		key_comp() const { return this->_comp; }
-
-			// value(Node *)
-			// {
-			// 	return _ptr;
-			// }alue_comp
 			value_compare	value_comp() const { return value_compare(this->_comp); }
 
 			// find
