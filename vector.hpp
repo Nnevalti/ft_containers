@@ -143,13 +143,13 @@ namespace ft
 			reference at (size_type n)
 			{
 				if (n >= this->_size)
-					throw std::out_of_range("vector");
+					throw std::out_of_range("vector::n out of range");
 				return _array[n];
 			}
 			const_reference at (size_type n) const
 			{
 				if (n > this->_size)
-					throw std::out_of_range("vector");
+					throw std::out_of_range("vector::n out of range");
 				return _array[n];
 			}
 
@@ -273,7 +273,6 @@ namespace ft
 					_alloc.destroy(&*it + 1);
 				}
 				_size--;
-
 				return position;
 			}
 
