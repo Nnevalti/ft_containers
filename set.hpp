@@ -42,7 +42,7 @@ namespace ft
 			typedef Node<value_type>	node_type;
 			typedef Node<value_type>*	node_ptr;
 
-			typedef ft::bidirectionalIterator<value_type const, node_type>		iterator;
+			typedef ft::bidirectionalIterator<value_type const, node_type const>		iterator;
 			typedef ft::bidirectionalIterator<value_type const, node_type const>	const_iterator;
 			typedef ft::reverseIterator<iterator>				reverse_iterator;
 			typedef ft::reverseIterator<const_iterator>			const_reverse_iterator;
