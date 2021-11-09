@@ -10,6 +10,7 @@
 #include <stack>
 #include "../map.hpp"
 #include <map>
+
 #include "../set.hpp"
 #include <set>
 
@@ -22,8 +23,7 @@ void print_title(std::string title, std::string subtitle = "");
 void test_vector();
 void test_stack();
 void test_map();
-
-// void test_set();
+void test_set();
 
 
 #endif

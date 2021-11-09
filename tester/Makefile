@@ -8,7 +8,7 @@ SRCS	=	main.cpp \
 				test_vector.cpp \
 				test_stack.cpp \
 				test_map.cpp \
-				# test_set.cpp
+				test_set.cpp
 
 OBJS	=	$(SRCS:.cpp=.o)
 

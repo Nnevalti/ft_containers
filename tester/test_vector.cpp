@@ -24,19 +24,17 @@ void print_vector(std::vector<int> vector, std::string name)
       std::cout << *it << " ";
   std::cout << std::endl;
 }
+
 void print_size(ft::vector<int> vector, std::string name)
 {
-  std::cout << name << " size: " << vector.size() << ", capacity: " << vector.capacity() << std::endl;
+  std::cout << name << " size: " << vector.size() << ", capacity: " << vector.capacity() << ", max_size: " << vector.max_size() << std::endl;
   std::cout << name << " empty() (1: true 0:false): " << vector.empty() << std::endl;
-
-
 }
 
 void print_size(std::vector<int> vector, std::string name)
 {
-  std::cout << name << " size: " << vector.size() << ", capacity: " << vector.capacity() << std::endl;
+  std::cout << name << " size: " << vector.size() << ", capacity: " << vector.capacity() << ", max_size: " << vector.max_size() << std::endl;
   std::cout << name << " empty() (1: true 0:false): " << vector.empty() << std::endl;
-
 }
 
 void test_vector()
@@ -128,17 +126,17 @@ void test_vector()
   print_size(ft_vector, "ft_vector");
   print_size(std_vector, "std_vector");
 
-  print_title("AFTER RESIZE(15)");
-  ft_vector.resize(15);
-  std_vector.resize(15);
+  print_title("AFTER RESIZE(20)");
+  ft_vector.resize(20);
+  std_vector.resize(20);
   print_size(ft_vector, "ft_vector");
   print_size(std_vector, "std_vector");
   print_vector(ft_vector, "ft_vector");
   print_vector(std_vector, "std_vector");
 
   print_title("AFTER RESIZE(20, 42)");
-  ft_vector.resize(20, 42);
-  std_vector.resize(20, 42);
+  ft_vector.resize(40, 42);
+  std_vector.resize(40, 42);
   print_size(ft_vector, "ft_vector");
   print_size(std_vector, "std_vector");
   print_vector(ft_vector, "ft_vector");
@@ -307,20 +305,20 @@ void test_vector()
   print_vector(std_vector, "std_vector");
 
   print_title("VECTOR SWAP() (MEMBER)", "swaping vector and range vector");
-  print_title("BEFORE MAP");
+  print_title("BEFORE SWAP");
   print_vector(ft_vector, "ft_vector");
   print_vector(ft_vector_range, "ft_vector_range");
   ft_vector.swap(ft_vector_range);
-  print_title("AFTER MAP");
+  print_title("AFTER SWAP");
   print_vector(ft_vector, "ft_vector");
   print_vector(ft_vector_range, "ft_vector_range");
 
-  print_title("VECTOR SWAP() (MEMBER)", "swaping vector and range vector");
-  print_title("BEFORE MAP");
+  print_title("VECTOR SWAP() (NON MEMBER)", "swaping vector and range vector again");
+  print_title("BEFORE SWAP");
   print_vector(ft_vector, "ft_vector");
   print_vector(ft_vector_range, "ft_vector_range");
   ft::swap(ft_vector, ft_vector_range);
-  print_title("AFTER MAP");
+  print_title("AFTER SWAP");
   print_vector(ft_vector, "ft_vector");
   print_vector(ft_vector_range, "ft_vector_range");
 
